@@ -1,0 +1,98 @@
+Django
+1. Crie um repositório novo no github
+2. Clone para a sua máquina
+3. Crie o ambiente virtual e ative:
+a. Crie um ambiente virtual: python -m venv venv
+b. Ative o ambiente virtual
+■ No windows: venv\Scripts\activate
+■ No linux: source venv/bin/activate
+4. Instale o django rest framework:
+a. pip install djangorestframework
+---> já instala o django por tras também.
+
+5. Crie um novo projeto no django
+a. django-admin startproject sistema .
+
+Esse ponto final no fim do comando é pra instalar na raiz.. Senão o manage não fica na raíz.
+
+b. django-admin startapp api
+
+--> Tentar entender o que é um PROJECT e um APP no django.
+Sistema e API nsão os nome que nós estamos dando, e por isso cria uma pasta com esses nomes, com os arquivos criados dentro.
+
+
+6. Crie o banco de dados
+a. python manage.py migrate
+--> esse comando faz rodar o banco de dados, que por padrão vem como sqlite3. Isso poderia ser alterado.
+Aqui ele vai criar o arquivo .db
+
+7. Crie o usuário administrador
+a. python manage.py createsuperuser
+8. Teste se o django foi instalado corretamente
+a. python manage.py runserver
+b. Acesse: http://localhost:8000/admin/
+-----
+o migrate a gente roda quando fazemos uma alteração na nossa estrutura, criou um campo, alterou uma tabela, etc.
+---
+o Installed_apps, pelo que entendi, é pra disponibilizar um serviço.
+----
+
+no arquivo models.py, temos isso aqui:
+class Empresa(models.Model):
+    id = models.AutoField(primary_key=True)
+    nome = models.TextField(null=False) # não aceita nulo
+    telefone = models.TextField(null=True) # aceita nulo
+
+
+QUE CRIA NO NOSSO BD UMA TABELA CHAMADA EMPRESA
+
+essa criação é efetivada com os comandos:
+python manage.py makemigrations
+python manage.py migrate
+---
+
+a ordem correta de criação do codigo seria MODEL > SERIALIZER > VIEW > URL (PATTERNS)
+PODERIA CHAMAR O SERIALIZER.PY de controler.py tbm, mas isso ficaria confuso, melhor manter a padronizaçao do framework django
+serializer tem que ser criado na mesma pasta da models.py
+---
+o arquivo URLS é criado na pasta do projeto, e nao na pasta da api.
+----
+django por padrao nao gera documentacao igual swagger/redoc. tem que usar outra aplicaao pra isso.
+aplicação drf-yasg -> gera redoc e swagger
+
+---
+O tipo de requisição PATCH é util pra quando voce quer só inserir/atualizar um campo especifico... você passa o ID e o campo que quer alterar, sem precisar mencionar os demais.
+---
+cria 1 serializer para cada model.
+cria 1 view para cada tabela.
+cria 1 arquivo de model para cada tabela
+
+quando nao precisa fazer nenhuma operação no banco de dados, nao usa serializer. 
+
+quanto estamos trabalhado com essas pastas que tem muitos arquivos e eu tenho importar eles, cria-se um arquivo chamado __init__.py dentro da pasta models.
+que ai significa que essa pasta é como se fosse um módulo, ela pode ser carregada.
+
+from .empresa import *
+----
+quando ensinou a usar o jwt token, colocou que é uma boa pratica, a cada requisição, se o erro for 401 (token expirado), acionar o refresh token e dai tentar nvamente. Falou tbm que as vezes faz 2 requisiçoes a cada requisicao, sendo uma pra ja renovar o token e outra pra fazer a requisicao em si, pra evitar dar 401, mas isso nao eh boa pratica, eu acho.
+agora com o jwt, temos que informar o token junto na requisição. Pra fazer isso atraves do postman, é necessario colocar no header, authotization bearer
+
+URL da requisição:
+
+
+http://localhost:8000/onnx/v2/
+Método: POST
+Aba selecionada:Headers 
+Cabeçalho (Header):
+
+Key: Authorization
+
+Value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiOiBcIk9YW... (token truncado)
+
+
+tbm da pra fazer pela aba authorization, seleciona auth type BEARER TOKEN, e inclui o token
+
+
+Pra mudar pra pedir token, a gente incluiu o SWAGGER_SETTINGS no arquivo settings.py
+-------
+a
